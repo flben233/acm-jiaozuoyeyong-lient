@@ -21,16 +21,20 @@ public class client {
                     prt1.println(0);
                 }
                 else{    //否则开始传文件
-                    prt1.println(img.length());     //发送文件长度
-                    OutputStream os = cli.getOutputStream();   //使用输出流传文件
-                    FileInputStream fis = new FileInputStream(img);
-                    int i1;
-                    byte b[] = new byte[1024];
-                    while ((i1 = fis.read(b)) != -1) {
-                        os.write(b, 0, i1);
+                    if(img.length() < 61858764){
+                        prt1.println(img.length());    //发送文件大小
+                        OutputStream os = cli.getOutputStream();   //使用输出流传文件
+                        FileInputStream fis = new FileInputStream(img);
+                        int i1;
+                        byte b[] = new byte[61858764];    //暂时还没解决文件分块传输的问题，只能暂时采用把文件一次性加载进内存再传输的办法，最大60M
+                        while ((i1 = fis.read(b)) != -1) {
+                            os.write(b, 0, i1);
+                        }
+                    }
+                    else {
+                        prt1.println(0);
                     }
                 }
-
             }
             else {      //否则发送文本
                 prt1.println("Client1:" + str);
@@ -64,9 +68,9 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
                             FileOutputStream fo = new FileOutputStream(image);
                             InputStream is = socket.getInputStream();
                             int i;
-                            byte b[] = new byte[1024];
+                            byte b[] = new byte[61858764];
                             while((i = is.read(b)) != -1 && len != 0){
-                                System.out.println(image.length());
+                                //System.out.println(image.length());
                                 fo.write(b,0,i);
                                 if(image.length() >= len){
                                     break;
