@@ -78,8 +78,13 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
                         System.out.println(str);
                     }
                 }
+                else {
+                    Thread.sleep(100);   //控制循环速度，降低资源开销
+                }
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
