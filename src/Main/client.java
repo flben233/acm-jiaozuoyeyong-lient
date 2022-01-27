@@ -47,7 +47,6 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
         try {
             while(true){
                 DataInputStream dis = new DataInputStream(socket.getInputStream());
-                if(dis.available() > 0) {
                     String str = dis.readUTF();
                     if(str.trim().equals("Thisisaimage")){
                         System.out.println("接收到请求");
@@ -78,13 +77,7 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
                         System.out.println(str);
                     }
                 }
-                else {
-                    Thread.sleep(100);   //控制循环速度，降低资源开销
-                }
-            }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
