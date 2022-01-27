@@ -2,6 +2,7 @@ package Main;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Scanner;
 
 public class client {
@@ -77,7 +78,10 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
                         System.out.println(str);
                     }
                 }
-        } catch (IOException e) {
+        } catch (SocketException se){
+            System.out.println("与服务端的连接已失效");
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
