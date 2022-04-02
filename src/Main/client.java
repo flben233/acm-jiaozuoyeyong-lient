@@ -3,9 +3,6 @@ package Main;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -69,7 +66,7 @@ public class client {
                         FileInputStream fis = new FileInputStream(img);
                         int progress = 0;
                         int i1;
-                        byte b[] = new byte[1024];
+                        byte[] b = new byte[1024];
                         jProgressBar = progressActivity.getProgressBar1();
                         jFrame1.setVisible(true);
                         while ((i1 = fis.read(b)) != -1) {
@@ -116,12 +113,12 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
                         File image = new File( downloadActivity.getTextField1().getText() + File.separator + wenjianming);
 //                        System.out.println("接受中...");
                         long len = dis.readLong();
-                        mainActivity.getTextArea1().append("[" + new Date().toString() + "]\n" + "  <" + "系统" +">  文件大小：" + len +"字节，文件名：" + wenjianming +"\n");
+                        mainActivity.getTextArea1().append("[" + new Date() + "]\n" + "  <" + "系统" +">  文件大小：" + len +"字节，文件名：" + wenjianming +"\n");
                         if(len != 0){
                             image.createNewFile();
                             FileOutputStream fo = new FileOutputStream(image);
                             int i;
-                            byte b[] = new byte[1024];
+                            byte[] b = new byte[1024];
                             jFrame1.setVisible(true);
                             while((i = dis.read(b)) != -1 && len != 0){
                                 jProgressBar.setValue((int)((image.length() / len) * 100));
@@ -134,19 +131,19 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
                             fo.close();
                             new DataOutputStream(socket.getOutputStream()).writeUTF("接收完了");
                             //stringBuffer.append("接收完了\n");
-                            mainActivity.getTextArea1().append("[" + new Date().toString() + "]\n" + "  <" + "服务器" + ">  接收完了\n");
+                            mainActivity.getTextArea1().append("[" + new Date() + "]\n" + "  <" + "服务器" + ">  接收完了\n");
                         }
                         else{
                             new DataOutputStream(socket.getOutputStream()).writeUTF("接收失败，文件不存在");
                         }
                     }
                     else{
-                        mainActivity.getTextArea1().append("[" + new Date().toString() + "]\n" + "  <" + "服务器" + ">  " + str +"\n");
+                        mainActivity.getTextArea1().append("[" + new Date() + "]\n" + "  <" + "服务器" + ">  " + str +"\n");
                     }
                 }
             }
         } catch (SocketException se){
-            mainActivity.getTextArea1().append("[" + new Date().toString() + "]\n" + "  <" + "服务器" + ">  " + "与服务端连接已失效" +"\n");
+            mainActivity.getTextArea1().append("[" + new Date() + "]\n" + "  <" + "服务器" + ">  " + "与服务端连接已失效" +"\n");
         }
         catch (IOException e) {
             e.printStackTrace();
