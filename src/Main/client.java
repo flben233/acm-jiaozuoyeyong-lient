@@ -16,7 +16,8 @@ import java.util.Scanner;
 public class client {
     public static void main(String[] args) throws Exception{
         UIManager.setLookAndFeel(new FlatLightLaf());
-        MainActivity mainActivity = new MainActivity();
+        DownloadActivity downloadActivity = new DownloadActivity();
+        MainActivity mainActivity = new MainActivity(downloadActivity);
         JFrame jFrame = new JFrame("数据传输助手-客户端");
         jFrame.setLocation(400,200);
         jFrame.setSize(800,600);
@@ -30,7 +31,7 @@ public class client {
             String ip;
             if (sc.hasNext()) {
                 ip = sc.next();
-                cli = new Socket(ip, 23333);     //启动客户端，使用23333端口
+                cli = new Socket(ip,23333);     //启动客户端，使用23333端口
                 mainActivity.byteArrayOutputStream1.reset();
                 mainActivity.byteArrayOutputStream.reset();
                 mainActivity.getTextArea1().setText("");
@@ -41,7 +42,7 @@ public class client {
                 Thread.sleep(100);
             }
         }
-        new process(cli,mainActivity).start();   //启动接收图片线程
+        new process(cli,mainActivity,downloadActivity).start();   //启动接收图片线程
         DataOutputStream dos = new DataOutputStream(cli.getOutputStream());
         dos.writeUTF(mainActivity.getTextField3().getText());
         dos.writeUTF("一个机智的客户端连上了");
@@ -90,10 +91,11 @@ public class client {
 class process extends Thread{      //这条线程用于接收图片，基本同服务端。
     Socket socket;
     MainActivity mainActivity;
-    StringBuffer stringBuffer = new StringBuffer();
-    process(Socket socket,MainActivity mainActivity){
+    DownloadActivity downloadActivity;
+    process(Socket socket,MainActivity mainActivity,DownloadActivity downloadActivity){
         this.socket = socket;
         this.mainActivity = mainActivity;
+        this.downloadActivity = downloadActivity;
     }
     @Override
     public void run() {
@@ -101,6 +103,7 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
         JProgressBar jProgressBar = progressActivity.getProgressBar1();
         try {
             while(true){
+                if(socket != null){
                 DataInputStream dis = new DataInputStream(socket.getInputStream());
                     String str = dis.readUTF();
                     if(str.trim().equals("Thisisaimage")){
@@ -110,7 +113,7 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
                         jFrame1.setContentPane(progressActivity.getPanel1());
                         mainActivity.getTextArea1().append("接收到文件传输请求\n");
                         String wenjianming = dis.readUTF().trim();
-                        File image = new File("." + File.separator + wenjianming);
+                        File image = new File( downloadActivity.getTextField1().getText() + File.separator + wenjianming);
 //                        System.out.println("接受中...");
                         long len = dis.readLong();
                         mainActivity.getTextArea1().append("[" + new Date().toString() + "]\n" + "  <" + "系统" +">  文件大小：" + len +"字节，文件名：" + wenjianming +"\n");
@@ -128,6 +131,7 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
                                     break;
                                 }
                             }
+                            fo.close();
                             new DataOutputStream(socket.getOutputStream()).writeUTF("接收完了");
                             //stringBuffer.append("接收完了\n");
                             mainActivity.getTextArea1().append("[" + new Date().toString() + "]\n" + "  <" + "服务器" + ">  接收完了\n");
@@ -140,6 +144,7 @@ class process extends Thread{      //这条线程用于接收图片，基本同�
                         mainActivity.getTextArea1().append("[" + new Date().toString() + "]\n" + "  <" + "服务器" + ">  " + str +"\n");
                     }
                 }
+            }
         } catch (SocketException se){
             mainActivity.getTextArea1().append("[" + new Date().toString() + "]\n" + "  <" + "服务器" + ">  " + "与服务端连接已失效" +"\n");
         }
