@@ -4,10 +4,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.util.Date;
 
@@ -126,6 +123,19 @@ public class MainActivity {
                 jFrame1.setVisible(true);
                 jFrame1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 downloadActivity.setjFrame(jFrame1);
+            }
+        });
+        textField1.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(e.getKeyChar() == KeyEvent.VK_ENTER){
+                    PrintStream prt = new PrintStream(byteArrayOutputStream);
+                    String str = textField1.getText();
+                    prt.println(str);
+                    textField1.setText("");
+                    prt.close();
+                    textArea1.append("[" + new Date().toString() + "]\n" + "  <" + "我" + ">  " + str + "\n");
+                }
             }
         });
     }
